@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer base {
+  body {
+    @apply bg-pink-100 text-gray-800;
+  }
+}
+
+.dark body {
+  @apply bg-[#0b0010] text-pink-100;
+}
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
+
+.font-handwritten {
+  font-family: "Patrick Hand", cursive;
+}
