@@ -97,8 +97,8 @@ export default function Events() {
               return (
                 <motion.div
                   key={event.title}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   onHoverStart={() => setHoveredIndex(index)}
