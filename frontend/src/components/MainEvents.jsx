@@ -16,8 +16,8 @@ export default function InviteEvent() {
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
         className="relative z-10 max-w-6xl mx-auto text-center"
