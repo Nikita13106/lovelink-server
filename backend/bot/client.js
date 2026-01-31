@@ -10,4 +10,6 @@ const client = new Client({
   ],
 });
 
+client.on("messageCreate", require("./events/messageCreate"));
+
 module.exports = client;
