@@ -9,21 +9,9 @@ import Rules from "./pages/Rules";
 import Vouches from "./pages/Vouches";
 
 export default function App() {
-  const [theme, setTheme] = useState("light");
-
-  // Apply theme to <html>
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }, [theme]);
-
   return (
     <>
-      <Navbar theme={theme} setTheme={setTheme} />
+      <Navbar />
 
       <main className="pt-16 transition-colors duration-300">
         <Routes>
@@ -32,7 +20,6 @@ export default function App() {
           <Route path="/roles" element={<Roles />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/vouches" element={<Vouches />} />
-
         </Routes>
       </main>
     </>
