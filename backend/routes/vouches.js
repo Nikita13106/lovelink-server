@@ -1,43 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const client = require("../bot/client");
+const Vouch = require("../models/Vouch");
 const cache = require("../cache/cache");
 
 router.get("/", async (req, res) => {
   try {
-    const cached = cache.get("vouches");
+    const cached = cache.get("vouches:list");
     if (cached) return res.json(cached);
 
-    const channel = await client.channels.fetch(
-      process.env.VOUCH_CHANNEL_ID
-    );
+    const vouches = await Vouch.find().sort({ createdAt: -1 }).limit(50).lean();
 
-    const messages = await channel.messages.fetch({ limit: 50 });
-
-    const vouches = messages.map((msg) => {
-      let content = msg.content;
-
-      msg.mentions.users.forEach((user) => {
-        const regex = new RegExp(`<@!?${user.id}>`, "g");
-        content = content.replace(regex, `@${user.username}`);
-      });
-
-      return {
-        author: msg.author.username,
-        avatar: msg.author.displayAvatarURL({
-          extension: "png",
-          size: 128,
-          forceStatic: false,
-        }),
-        content,
-        createdAt: msg.createdAt,
-      };
-    });
-
-    cache.set("vouches", vouches);
+    cache.set("vouches:list", vouches, 60); // cache for 60s
     res.json(vouches);
   } catch (err) {
-    console.error("Vouches error:", err);
+    console.error("Vouches API error:", err);
     res.status(500).json({ error: "Failed to fetch vouches" });
   }
 });
