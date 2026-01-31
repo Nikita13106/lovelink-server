@@ -6,7 +6,6 @@ export default function Footer() {
       className="
     bg-[#1a0f1f] text-pink-200
     transition-colors
-    h-[140px]
     flex flex-col justify-between
   "
     >
