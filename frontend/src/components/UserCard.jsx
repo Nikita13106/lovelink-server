@@ -1,19 +1,19 @@
 import { motion } from "framer-motion";
 import React from "react";
-function UserCard({ userId, username, pfp, banner, onClick }) {
-  const redirectToLookup = () => {
-    window.open(`https://id.rappytv.com/${userId}`, "_blank");
-  };
 
+function UserCard({ userId, username, pfp, banner }) {
   return (
-    <motion.button
-      onClick={redirectToLookup}
+    <motion.a
+      href={`https://id.rappytv.com/${userId}`}
+      target="_blank"
+      rel="noopener noreferrer"
       initial={false}
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 160 }}
       className="relative w-full max-w-[260px] mx-auto rounded-3xl overflow-hidden
-        bg-white shadow-md hover:shadow-xl transition-shadow group cursor-pointer"
+        bg-white shadow-md hover:shadow-xl transition-shadow group cursor-pointer
+        h-[260px] block"
     >
       {/* Banner */}
       <div className="relative w-full aspect-[21/10] rounded-2xl overflow-hidden mb-[-3rem]">
@@ -25,8 +25,6 @@ function UserCard({ userId, username, pfp, banner, onClick }) {
             loop
             playsInline
             className="w-full h-full object-cover"
-            width={600}
-            height={112}
             preload="auto"
           />
         ) : (
@@ -34,8 +32,6 @@ function UserCard({ userId, username, pfp, banner, onClick }) {
             src={banner}
             alt={`${username} banner`}
             className="w-full h-full object-cover"
-            width={600}
-            height={112}
             loading="lazy"
           />
         )}
@@ -56,23 +52,16 @@ function UserCard({ userId, username, pfp, banner, onClick }) {
 
       {/* Info */}
       <div className="pt-4 pb-6 text-center">
-        <p
-          className="text-base sm:text-sm font-semibold text-gray-800
-          group-hover:text-pink-500 transition-colors truncate"
-        >
+        <p className="text-base sm:text-sm font-semibold text-gray-800 group-hover:text-pink-500 transition-colors truncate">
           @{username}
         </p>
         <p className="text-xs text-gray-500">LoveLINK</p>
       </div>
 
       {/* Hover overlay */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity
-        bg-black/5 pointer-events-none"
-      />
-    </motion.button>
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/5 pointer-events-none" />
+    </motion.a>
   );
 }
 
-// Memoize to avoid unnecessary re-renders
 export default React.memo(UserCard);
