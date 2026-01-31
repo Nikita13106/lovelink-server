@@ -2,19 +2,18 @@ import { motion } from "framer-motion";
 import { ScrollText, AlertTriangle } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import cat from "../assets/rules.png";
-
+import { IMAGES, cloudImage } from "../config/images";
 const rules = [
   {
     no: "01",
     title: "Respect Everyone",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: ["Be kind and fair to all.", "No harassment or hate speech."],
   },
   {
     no: "02",
     title: "No Toxicity",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: [
       "Avoid bullying, raiding, or harassment.",
       "Toxic behavior is not tolerated.",
@@ -23,13 +22,13 @@ const rules = [
   {
     no: "03",
     title: "No Ads",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: ["No self-promotion without approval."],
   },
   {
     no: "04",
     title: "Respect Staff",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: [
       "Follow decisions from authority.",
       "Question politely if needed.",
@@ -38,19 +37,19 @@ const rules = [
   {
     no: "05",
     title: "Privacy First",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: ["Do not share personal info or DMs."],
   },
   {
     no: "06",
     title: "Voice Chat Etiquette",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: ["Speak respectfully and avoid noise."],
   },
   {
     no: "07",
     title: "Safe & Friendly",
-    img: cat,
+    img: cloudImage(IMAGES.rules.cat, { width: 300 }),
     points: ["No NSFW, spam, or illegal activity."],
   },
 ];
@@ -133,6 +132,7 @@ export default function Rules() {
                       <motion.img
                         src={rule.img}
                         alt={rule.title}
+                        loading="lazy"
                         className="w-full h-auto rounded-xl object-contain"
                         variants={{
                           rest: { opacity: 0, scale: 0.95 },
