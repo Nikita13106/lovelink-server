@@ -1,10 +1,9 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import UserProfileModal from "../components/UserProfileModal";
 import UserCard from "../components/UserCard";
 
 import { IMAGES, cloudImage } from "../config/images";
@@ -50,42 +49,83 @@ const manualImages = {
   ],
 };
 
+/* ---------------- SKELETON PLACEHOLDER ---------------- */
+const skeletonRoles = Object.keys(roleStyles).map((roleId) => ({
+  id: roleId,
+  title: "Loading...",
+  members: Array.from({ length: manualImages[roleId]?.length || 4 }).map(
+    (_, i) => ({
+      id: `skeleton-${i}`,
+      username: "",
+      pfp: null,
+      banner: null,
+    }),
+  ),
+}));
+const CACHE_KEY = "roles";
 export default function Roles() {
-  const [rawRoles, setRawRoles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState(() => {
+    const cached = localStorage.getItem(CACHE_KEY);
+    return cached ? JSON.parse(cached) : skeletonRoles;
+  });
+
   const [activeUser, setActiveUser] = useState(null);
 
-  /* ---------------- FETCH ROLES ---------------- */
+  /* ---------------- FETCH & CACHE UI DATA ---------------- */
   useEffect(() => {
-    fetch(`${BASE_URL}/api/roles`)
-      .then((res) => res.json())
-      .then((data) => setRawRoles(data))
-      .catch(() => setRawRoles([]))
-      .finally(() => setLoading(false));
+    let isMounted = true;
+
+    // Skip fetch if cache exists
+    if (localStorage.getItem(CACHE_KEY)) return;
+
+    const fetchRoles = async () => {
+      try {
+        const { data: rawRoles } = await axios.get(`${BASE_URL}/api/roles`);
+
+        if (!isMounted) return;
+
+        // PROCESS ONLY UI DATA
+        const processed = rawRoles
+          .filter((r) => roleStyles[r.roleId])
+          .map((role) => {
+            const imagesForRole = manualImages[role.roleId] || [];
+
+            return {
+              id: role.roleId,
+              title: role.name,
+              members: role.members.map((member, idx) => ({
+                id: member.userId,
+                username: member.username,
+                pfp: cloudImage(imagesForRole[idx]?.pfp || null, {
+                  width: 128,
+                  height: 128,
+                }),
+                banner: cloudImage(imagesForRole[idx]?.banner || null, {
+                  width: 600,
+                }),
+              })),
+            };
+          });
+
+        // CACHE ONLY UI-READY DATA
+        localStorage.setItem(CACHE_KEY, JSON.stringify(processed));
+
+        setRoles(processed);
+      } catch (err) {
+        console.error("Failed to fetch roles:", err);
+        setRoles(skeletonRoles);
+      }
+    };
+
+    fetchRoles();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-
-  /* ---------------- MAP DATA (MEMOIZED) ---------------- */
-  const roles = useMemo(() => {
-    return rawRoles.map((role) => {
-      const normalizedRoleId = role.roleId;
-      const imagesForRole = manualImages[normalizedRoleId] || [];
-
-      return {
-        id: normalizedRoleId,
-        title: role.name,
-        members: role.members.map((member, idx) => ({
-          id: member.userId,
-          username: member.username,
-          pfp: imagesForRole[idx]?.pfp ?? null,
-          banner: imagesForRole[idx]?.banner ?? null,
-        })),
-      };
-    });
-  }, [rawRoles]);
 
   const openUser = useCallback((user) => setActiveUser(user), []);
 
-  /* ---------------- RENDER ---------------- */
   return (
     <div className="min-h-screen flex flex-col bg-pink-50 transition-colors">
       <Navbar />
@@ -115,12 +155,6 @@ export default function Roles() {
               The people who shape, protect, and grow the LoveLINK community.
             </p>
           </motion.div>
-
-          {loading && (
-            <p className="text-center text-pink-500">
-              Loading leadership team…
-            </p>
-          )}
 
           {/* ROLES */}
           <div className="space-y-16 sm:space-y-20">
@@ -156,7 +190,7 @@ export default function Roles() {
                       alt={role.title}
                       className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain"
                       loading="eager"
-                      initial={{ scale: 0.9, rotate: -6, opacity: 0 }}
+                      initial={{ scale : 0.9, rotate: -6, opacity: 0 }}
                       whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
                       whileHover={{ scale: 1.12, rotate: 6 }}
                       transition={{ type: "spring", stiffness: 160 }}
@@ -178,21 +212,24 @@ export default function Roles() {
                   {/* MEMBERS */}
                   <div className="relative pl-4 sm:pl-6">
                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-pink-300/60 via-pink-400/30 to-transparent rounded-full" />
-
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 sm:gap-x-8 gap-y-10 sm:gap-y-12">
-                      {role.members.map((member) => (
-                        <UserCard
-                          key={member.id}
-                          userId={member.id}
-                          username={member.username}
-                          pfp={cloudImage(member.pfp, {
-                            width: 128,
-                            height: 128,
-                          })}
-                          banner={cloudImage(member.banner, { width: 600 })}
-                          onClick={() => openUser(member)}
-                        />
-                      ))}
+                      {role.members.map((member) =>
+                        member.username === "" ? (
+                          <div
+                            key={member.id}
+                            className="h-48 w-full rounded-3xl bg-pink-200 animate-pulse"
+                          />
+                        ) : (
+                          <UserCard
+                            key={member.id}
+                            userId={member.id}
+                            username={member.username}
+                            pfp={member.pfp}
+                            banner={member.banner}
+                            onClick={() => openUser(member)}
+                          />
+                        ),
+                      )}
                     </div>
                   </div>
                 </motion.section>
@@ -201,9 +238,7 @@ export default function Roles() {
           </div>
         </div>
       </main>
-
       <Footer />
-      <UserProfileModal user={activeUser} onClose={() => setActiveUser(null)} />
     </div>
   );
 }
