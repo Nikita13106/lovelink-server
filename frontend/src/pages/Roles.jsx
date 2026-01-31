@@ -11,7 +11,6 @@ import { IMAGES, cloudImage } from "../config/images";
 import BASE_URL from "../config/api";
 
 /* ---------------- ROLE STYLES ---------------- */
-
 const roleStyles = {
   "1465408066093711371": {
     gradient: "from-yellow-200 via-pink-200 to-purple-200",
@@ -32,7 +31,6 @@ const roleStyles = {
 };
 
 /* ---------------- MANUAL IMAGES ---------------- */
-
 const manualImages = {
   "1465408066093711371": [
     { pfp: IMAGES.pfps.devdas, banner: IMAGES.banners.banner1 },
@@ -57,28 +55,27 @@ export default function Roles() {
   const [loading, setLoading] = useState(true);
   const [activeUser, setActiveUser] = useState(null);
 
-  /* ---------------- FETCH ---------------- */
-
+  /* ---------------- FETCH ROLES ---------------- */
   useEffect(() => {
     fetch(`${BASE_URL}/api/roles`)
       .then((res) => res.json())
-      .then(setRawRoles)
-      .catch((err) => {
-        console.error("Error fetching roles:", err);
-        setRawRoles([]);
-      })
+      .then((data) => setRawRoles(data))
+      .catch(() => setRawRoles([]))
       .finally(() => setLoading(false));
   }, []);
 
   /* ---------------- MAP DATA (MEMOIZED) ---------------- */
-
   const roles = useMemo(() => {
     return rawRoles.map((role) => {
-      const imagesForRole = manualImages[role.id] || [];
+      const normalizedRoleId = role.roleId;
+      const imagesForRole = manualImages[normalizedRoleId] || [];
+
       return {
-        ...role,
+        id: normalizedRoleId,
+        title: role.name,
         members: role.members.map((member, idx) => ({
-          ...member,
+          id: member.userId,
+          username: member.username,
           pfp: imagesForRole[idx]?.pfp ?? null,
           banner: imagesForRole[idx]?.banner ?? null,
         })),
@@ -86,17 +83,13 @@ export default function Roles() {
     });
   }, [rawRoles]);
 
-  const openUser = useCallback((user) => {
-    setActiveUser(user);
-  }, []);
+  const openUser = useCallback((user) => setActiveUser(user), []);
 
   /* ---------------- RENDER ---------------- */
-
   return (
-    <div className="min-h-screen bg-pink-50 transition-colors pb-[160px]">
+    <div className="min-h-screen flex flex-col bg-pink-50 transition-colors">
       <Navbar />
-
-      <main className="pt-24 sm:pt-32 pb-20 px-4 sm:px-6">
+      <main className="flex-1 pt-24 sm:pt-32 pb-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* HEADER */}
           <motion.div
@@ -132,7 +125,7 @@ export default function Roles() {
           {/* ROLES */}
           <div className="space-y-16 sm:space-y-20">
             {roles.map((role, idx) => {
-              const style = roleStyles[role.id];
+              const style = roleStyles[String(role.id)];
               if (!style) return null;
 
               return (
@@ -162,7 +155,7 @@ export default function Roles() {
                       src={cloudImage(style.iconImg, { width: 96 })}
                       alt={role.title}
                       className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain"
-                      loading="lazy"
+                      loading="eager"
                       initial={{ scale: 0.9, rotate: -6, opacity: 0 }}
                       whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
                       whileHover={{ scale: 1.12, rotate: 6 }}
