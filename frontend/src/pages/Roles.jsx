@@ -91,7 +91,7 @@ export default function Roles() {
             const imagesForRole = manualImages[role.roleId] || [];
 
             return {
-              id: role.roleId,
+              id: String(role.roleId),
               title: role.name,
               members: role.members.map((member, idx) => ({
                 id: member.userId,
@@ -190,7 +190,7 @@ export default function Roles() {
                       alt={role.title}
                       className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain"
                       loading="eager"
-                      initial={{ scale : 0.9, rotate: -6, opacity: 0 }}
+                      initial={{ scale: 0.9, rotate: -6, opacity: 0 }}
                       whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
                       whileHover={{ scale: 1.12, rotate: 6 }}
                       transition={{ type: "spring", stiffness: 160 }}
