@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import logo from "../assets/Logo.gif";
 import { FaDiscord } from "react-icons/fa";
+import { IMAGES, cloudImage } from "../config/images";
 
 export default function Hero() {
   return (
@@ -21,8 +21,8 @@ export default function Hero() {
       <div className="absolute top-1/3 -right-32 w-96 h-96 rounded-full blur-3xl bg-rose-300/40" />
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl w-full"
@@ -33,7 +33,7 @@ export default function Hero() {
           className="mx-auto mb-5 w-28 h-28 rounded-full border border-pink-300 bg-white flex items-center justify-center shadow-lg"
         >
           <img
-            src={logo}
+            src={cloudImage(IMAGES.homepage.logo)}
             alt="LoveLINK Logo"
             className="w-24 h-24 rounded-full object-cover"
           />

@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import bannerImg from "../assets/banner.jpg";
 import {
   Mic,
   MessageSquare,
@@ -9,6 +8,7 @@ import {
   Gift,
   Sparkles,
 } from "lucide-react";
+import { IMAGES, cloudImage } from "../config/images";
 
 const features = [
   {
@@ -151,7 +151,7 @@ export default function Features() {
                 ease: "easeInOut",
               }}
               style={{
-                backgroundImage: `url(${bannerImg})`,
+                backgroundImage: `url(${cloudImage(IMAGES.homepage.banner)})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}

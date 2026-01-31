@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { FaDiscord, FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
 import { useState } from "react";
-import logo from "../assets/Logo.gif";
+import { IMAGES, cloudImage } from "../config/images";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -18,9 +18,10 @@ export default function Navbar() {
         <NavLink to="/" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full border border-pink-300 bg-white flex items-center justify-center transition-colors">
             <img
-              src={logo}
+              src={cloudImage(IMAGES.homepage.logo, { width: 56 })}
               alt="LoveLINK"
               className="w-7 h-7 rounded-full object-cover"
+              loading="lazy"
             />
           </div>
           <span className="font-semibold text-lg text-gray-800 transition-colors">
