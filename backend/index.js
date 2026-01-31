@@ -4,7 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const client = require("./bot/client");
-
+const syncRoles = require("./bot/events/roleSync");
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -26,8 +26,10 @@ async function startServer() {
     // 2️⃣ Start Discord bot
     await client.login(process.env.DISCORD_TOKEN);
 
-    client.once("ready", () => {
+    client.once("ready", async () => {
       console.log(`🤖 Bot logged in as ${client.user.tag}`);
+
+      await syncRoles(client);
     });
 
     // 3️⃣ Register routes AFTER DB is ready
