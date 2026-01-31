@@ -1,24 +1,22 @@
 import { motion } from "framer-motion";
-
-export default function UserCard({ userId, username, pfp, banner, onClick }) {
+import React from "react";
+function UserCard({ userId, username, pfp, banner, onClick }) {
   const redirectToLookup = () => {
-    if (onClick) return onClick(); // trigger modal
     window.open(`https://id.rappytv.com/${userId}`, "_blank");
   };
 
   return (
     <motion.button
       onClick={redirectToLookup}
-      initial={false} // prevent initial animation for LCP
-      whileHover={{ y: -8 }}
+      initial={false}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 160 }}
       className="relative w-full max-w-[260px] mx-auto rounded-3xl overflow-hidden
-        bg-white shadow-md hover:shadow-2xl
-        transition-shadow group cursor-pointer"
+        bg-white shadow-md hover:shadow-xl transition-shadow group cursor-pointer"
     >
       {/* Banner */}
-      <div className="relative w-full aspect-[21/10] rounded-2xl overflow-hidden mb-[-3.5rem]">
+      <div className="relative w-full aspect-[21/10] rounded-2xl overflow-hidden mb-[-3rem]">
         {banner?.endsWith(".mp4") ? (
           <video
             src={banner}
@@ -38,7 +36,7 @@ export default function UserCard({ userId, username, pfp, banner, onClick }) {
             className="w-full h-full object-cover"
             width={600}
             height={112}
-            loading="eager"
+            loading="lazy"
           />
         )}
         <div className="absolute inset-0 bg-black/10" />
@@ -49,10 +47,10 @@ export default function UserCard({ userId, username, pfp, banner, onClick }) {
         <motion.img
           src={pfp}
           alt={username}
-          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover
-            border-4 border-white shadow-lg"
+          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white shadow-lg"
           whileHover={{ scale: 1.08 }}
           transition={{ type: "spring", stiffness: 180 }}
+          loading="lazy"
         />
       </div>
 
@@ -75,3 +73,6 @@ export default function UserCard({ userId, username, pfp, banner, onClick }) {
     </motion.button>
   );
 }
+
+// Memoize to avoid unnecessary re-renders
+export default React.memo(UserCard);
